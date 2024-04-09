@@ -7,6 +7,17 @@ public class PrimaryController {
 
     @FXML
     private void switchToSecondary() throws IOException {
+        
         App.setRoot("secondary");
+    }
+
+    @FXML
+    private void openSourceFolder() throws IOException {
+        
+    }
+
+    @FXML
+    private void openDestinationFolder() throws IOException {
+
     }
 }
