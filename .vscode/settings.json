@@ -1,0 +1,21 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+
+    "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk",
+    
+    "java.configuration.runtimes": [
+        {
+            "name":"JavaSE-11",
+            "path": "/usr/lib/jvm/java-11-openjdk",
+            "sources": "/usr/lib/jvm/java-11-openjdk/lib/src.zip",
+            "javadoc": "/usr/share/doc/java-11-openjdk/api"
+        },
+        {
+            "name":"JavaSE-17",
+            "path": "/usr/lib/jvm/java-17-openjdk",
+            "sources": "/usr/lib/jvm/java-17-openjdk/lib/src.zip",
+            "javadoc": "/usr/share/doc/java17-openjdk/api",
+            "default": true
+        }
+    ]
+}

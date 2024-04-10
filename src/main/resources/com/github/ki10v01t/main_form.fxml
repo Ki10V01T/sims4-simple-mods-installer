@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="540.0" prefWidth="532.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ki10v01t.MainFormController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="413.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+      <children>
+            <Button id="sourceButton" fx:id="sourceButton" layoutX="184.0" layoutY="40.0" mnemonicParsing="false" onAction="#openSourceFolder" prefHeight="26.0" prefWidth="170.0" text="Select Source Folder" />
+            <Button id="destButton" fx:id="destButton" layoutX="184.0" layoutY="90.0" mnemonicParsing="false" onAction="#openDestinationFolder" prefHeight="26.0" prefWidth="170.0" text="Select Destination Folder" />
+            <TextField id="copyFromBox" fx:id="copyFromBox" editable="false" layoutX="15.0" layoutY="40.0" prefHeight="26.0" prefWidth="160.0" />
+            <Label layoutX="15.0" layoutY="20.0" text="Copy from:" />
+            <Label layoutX="15.0" layoutY="70.0" text="Copy to:" />
+            <TextField id="copyToBox" fx:id="copyToBox" editable="false" layoutX="15.0" layoutY="90.0" prefHeight="26.0" prefWidth="160.0" />
+            <TextArea id="logBox" fx:id="logBox" editable="false" layoutX="15.0" layoutY="190.0" prefHeight="300.0" prefWidth="500.0" />
+            <Button id="downloadButton" fx:id="downloadButton" layoutX="365.0" layoutY="40.0" mnemonicParsing="false" onAction="#downloadMods" prefHeight="80.0" prefWidth="150.0" text="Download" />
+            <Label layoutX="15.0" layoutY="170.0" text="Progress Log:" />
+            <CheckBox id="byDefaultProp" fx:id="byDefaultProp" layoutX="15.0" layoutY="130.0" mnemonicParsing="false" text="Copy by default" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>

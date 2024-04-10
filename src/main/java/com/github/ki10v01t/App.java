@@ -12,13 +12,12 @@ import java.io.IOException;
  * JavaFX App
  */
 public class App extends Application {
-
     private static Scene scene;
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
-        stage.setTitle("Sims 4 Simplt mods dowloader");
+        scene = new Scene(loadFXML("main_form"), 532, 540);
+        stage.setTitle("Sims 4 Simple mods dowloader");
         stage.setScene(scene);
         stage.show();
     }
