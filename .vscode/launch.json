@@ -14,7 +14,7 @@
             "type": "java",
             "name": "Local",
             "request": "launch",
-            "mainClass": "com.github.ki10v01t/com.github.ki10v01t.Main",
+            "mainClass": "com.github.ki10v01t.SuperMain",
             "projectName": "sims4_mods_downloader"
         },
         {
