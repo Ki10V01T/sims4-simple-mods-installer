@@ -15,11 +15,11 @@
             <Button id="sourceButton" fx:id="sourceButton" layoutX="184.0" layoutY="40.0" mnemonicParsing="false" onAction="#openSourceFolder" prefHeight="26.0" prefWidth="170.0" text="Select Source Folder" />
             <Button id="destButton" fx:id="destButton" layoutX="184.0" layoutY="90.0" mnemonicParsing="false" onAction="#openDestinationFolder" prefHeight="26.0" prefWidth="170.0" text="Select Destination Folder" />
             <TextField id="copyFromBox" fx:id="copyFromBox" editable="false" layoutX="15.0" layoutY="40.0" prefHeight="26.0" prefWidth="160.0" />
-            <Label layoutX="15.0" layoutY="20.0" text="Copy from:" />
-            <Label layoutX="15.0" layoutY="70.0" text="Copy to:" />
+            <Label layoutX="15.0" layoutY="20.0" text="Copy mods and tray from:" />
+            <Label layoutX="15.0" layoutY="70.0" text="Copy mods to:" />
             <TextField id="copyToBox" fx:id="copyToBox" editable="false" layoutX="15.0" layoutY="90.0" prefHeight="26.0" prefWidth="160.0" />
-            <TextArea id="logBox" fx:id="logBox" editable="false" layoutX="15.0" layoutY="190.0" prefHeight="300.0" prefWidth="500.0" />
-            <Button id="downloadButton" fx:id="downloadButton" layoutX="365.0" layoutY="40.0" mnemonicParsing="false" onAction="#downloadMods" prefHeight="80.0" prefWidth="150.0" text="Download" />
+            <TextArea id="logBox" fx:id="logBox" editable="false" layoutX="15.0" layoutY="190.0" prefHeight="300.0" prefWidth="500.0" wrapText="true" />
+            <Button id="downloadButton" fx:id="downloadButton" layoutX="365.0" layoutY="40.0" mnemonicParsing="false" onAction="#downloadAll" prefHeight="80.0" prefWidth="150.0" text="Download" />
             <Label layoutX="15.0" layoutY="170.0" text="Progress Log:" />
             <CheckBox id="byDefaultProp" fx:id="byDefaultProp" layoutX="15.0" layoutY="130.0" mnemonicParsing="false" text="Copy by default" />
       </children>

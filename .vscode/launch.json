@@ -12,10 +12,18 @@
         },
         {
             "type": "java",
-            "name": "App",
+            "name": "Local",
             "request": "launch",
-            "mainClass": "com.github.ki10v01t/com.github.ki10v01t.App",
+            "mainClass": "com.github.ki10v01t/com.github.ki10v01t.Main",
             "projectName": "sims4_mods_downloader"
+        },
+        {
+            "type": "java",
+            "name": "Attach to Remote Program",
+            "projectName": "sims4_mods_downloader",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": "10115"
         }
     ]
 }
