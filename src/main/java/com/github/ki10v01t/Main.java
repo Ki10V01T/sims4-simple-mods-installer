@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  */
 public class Main extends Application {
     private static Scene scene;
-    public static final String osType = Stream.of(System.getProperty("os.name").split(" ")).findFirst().get();;
+    public static final String osType = Stream.of(System.getProperty("os.name").split(" ")).findFirst().get();
 
     @Override
     public void start(@SuppressWarnings("exports") Stage stage) throws IOException {

@@ -15,7 +15,6 @@
             <artifactId>javafx-controls</artifactId>
             <version>17</version>
         </dependency>
-        
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
@@ -47,7 +46,6 @@
             <artifactId>log4j-core</artifactId>
             <version>2.23.1</version>
         </dependency>
-
         
     </dependencies>
     <build>
@@ -57,7 +55,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <release>17</release>
+                    <release>17</release>                  
                 </configuration>
             </plugin>
             <plugin>
