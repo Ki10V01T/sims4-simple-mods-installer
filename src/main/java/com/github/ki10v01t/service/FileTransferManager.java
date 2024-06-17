@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.Main;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert.AlertType;
 
@@ -26,6 +27,8 @@ public class FileTransferManager extends Task<Boolean> {
     private Logger log = LogManager.getLogger("FileTransferManager");
     private Path selectedSourceDir, selectedDstDir;
     private String copyTo;
+
+    private LogMessageManager lmm;
 
     private CopyMode mode;
     private Boolean isDefaultPath;
@@ -37,7 +40,10 @@ public class FileTransferManager extends Task<Boolean> {
     private ArrayList<Path> modsFilesList = new ArrayList<>();
     private ArrayList<Path> trayFilesList = new ArrayList<>();
 
-    public FileTransferManager(Path selectedSourceDir, Path selectedDstDir, String copyTo) {
+    public FileTransferManager(CopyMode copyMode, Path selectedSourceDir, Path selectedDstDir, String copyTo, Boolean defaultPathFlag, LogMessageManager lmm) {
+        this.lmm = lmm;
+        this.isDefaultPath = defaultPathFlag;
+        this.mode = copyMode;
         this.selectedSourceDir = selectedSourceDir;
         this.selectedDstDir = selectedDstDir;
         this.copyTo = copyTo;
@@ -176,17 +182,25 @@ public class FileTransferManager extends Task<Boolean> {
             Path destinationFile = Paths.get(destinationFolder.toString() + slashStyle + file.getFileName().toString());
             try (OutputStream fos = Files.newOutputStream(destinationFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
                 Files.copy(file,fos);
-                updateMessage(new LogMessage(file.toString(), destinationFile.toString()).getMessage().get());
-                //lmm.writeMessage(new LogMessage(file.toString(), destinationFile.toString()));
+                Thread.sleep(1000);
+                lmm.sendMessage(lmm.createCopyMessage(file.toString(), destinationFile.toString()));
+                //updateMessage(lmm.createCopyMessage(file.toString(), destinationFile.toString()));
             } catch (FileAlreadyExistsException faee) {
                 log.info(faee.getMessage(), faee);
-                updateMessage(new LogMessage(file.toString()).getMessage().get());
+                lmm.sendMessage(lmm.createAlreadyExistsMessage(file.toString()));
+                //updateMessage(lmm.createAlreadyExistsMessage(file.toString()));
                 //lmm.writeMessage(new LogMessage(file.toString()));
             } catch (IOException ioe) {
                 log.error(ioe.getMessage(), ioe);
+            } catch (InterruptedException ie) {
+
             }
         });
     }
+
+    // public ChangeListener<String> fileListener() {
+    //     return new
+    // }
 
     // @Override
     // public void run() {

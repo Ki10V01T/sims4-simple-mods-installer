@@ -1,7 +1,5 @@
 package com.github.ki10v01t.service;
 
-import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;

@@ -1,15 +1,21 @@
 package com.github.ki10v01t;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.service.CopyMode;
 import com.github.ki10v01t.service.FileTransferManager;
+import com.github.ki10v01t.service.LogMessageManager;
 
+import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -35,8 +41,7 @@ public class MainFormController {
     private Path selectedSourceDir, selectedDstDir;
     private DirectoryChooser dc =  new DirectoryChooser();
     private FileTransferManager ftm;
-    
-    public static Integer columnCount = 0;
+    private LogMessageManager lmm;
     
     // @FXML
     // private void switchToSecondary() throws IOException {
@@ -46,7 +51,10 @@ public class MainFormController {
 
     @FXML
     private void openSourceFolder() throws IOException {
-        selectedSourceDir = dc.showDialog(Stage.getWindows().get(0)).toPath();
+        File file = dc.showDialog(Stage.getWindows().get(0));
+        if (file != null) {
+            selectedSourceDir = file.toPath();
+        }
 
         if (selectedSourceDir != null) {
             copyFromBox.setText(selectedSourceDir.toString());
@@ -55,7 +63,11 @@ public class MainFormController {
 
     @FXML
     private void openDestinationFolder() throws IOException {
-        selectedDstDir = dc.showDialog(Stage.getWindows().get(0)).toPath();
+        File file = dc.showDialog(Stage.getWindows().get(0));
+        if (file != null) {
+            selectedDstDir = file.toPath();
+        }
+
         if (selectedDstDir != null) {
             copyToBox.setText(selectedDstDir.toString());
         }
@@ -63,9 +75,9 @@ public class MainFormController {
 
     @FXML
     private void downloadAll() {
-        // if(lmm == null) {
-        //     lmm = new LogMessageManager(logBox.getPrefColumnCount());
-        // }
+        if(lmm == null) {
+            lmm = new LogMessageManager(logBox);
+        }
 
         if (selectedSourceDir == null) {
             //AlertDialogManager.throwAlertDialog("Source folder han not been selected", "Please, select a source folder", AlertType.WARNING);
@@ -80,38 +92,24 @@ public class MainFormController {
 
         try {
             downloadButton.setDisable(true);
-
-            columnCount = logBox.getPrefColumnCount();
             
-            ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, copyToBox.getText());
-            Task<Boolean> fileThreadMods = ftm;
-            Task<Boolean> fileThreadTray = ftm;
+            //ftm = new FileTransferManager(CopyMode.MODS, selectedSourceDir, selectedDstDir, copyToBox.getText(), byDefaultProp.isSelected());
             
-            logBox.textProperty().bind(ftm.messageProperty().concat(logBox.getText()));
+            Task<Boolean> modsThread = new FileTransferManager(CopyMode.MODS, selectedSourceDir, selectedDstDir, copyToBox.getText(), byDefaultProp.isSelected(), lmm);
+            Task<Boolean> trayThread = new FileTransferManager(CopyMode.TRAY, selectedSourceDir, selectedDstDir, copyToBox.getText(), byDefaultProp.isSelected(), lmm);
+            Boolean resultMods = false, resultTray = false;
 
-            for(CopyMode el : CopyMode.values()) {
-                ftm.setCopyMode(el);
-                ftm.setIsDefaultPath(byDefaultProp.isSelected());
+            lmm.bindLog(modsThread.messageProperty());
+            modsThread.run();
+            trayThread.run();
 
-                switch (el) {
-                    case TRAY:
-                        fileThreadTray.run();
-                        break;
-                    case MODS:
-                        //fileThreadMods.run();
-                        break;
-                    default:
-                        break;
-                }
-                
-                //ftm.copyModsAndTray();
-                
-            }
         // } catch (IOException ioe) {
         //     log.error(ioe.getMessage(), ioe);
         } catch (IllegalThreadStateException itse) {
             log.error(itse.getMessage(), itse);
-        } finally {
+        }
+
+        finally {
             downloadButton.setDisable(false);
         }
     }
