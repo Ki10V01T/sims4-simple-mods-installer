@@ -3,8 +3,11 @@ package com.github.ki10v01t;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +22,7 @@ import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
@@ -32,7 +36,7 @@ public class MainFormController {
     @FXML
     private TextField copyToBox;
     @FXML
-    private TextArea logBox;
+    private ListView<String> logBox;
     @FXML
     private Button downloadButton;  
 
@@ -94,22 +98,21 @@ public class MainFormController {
             downloadButton.setDisable(true);
             
             //ftm = new FileTransferManager(CopyMode.MODS, selectedSourceDir, selectedDstDir, copyToBox.getText(), byDefaultProp.isSelected());
-            
+            ExecutorService threadPool = Executors.newFixedThreadPool(2);
             Task<Boolean> modsThread = new FileTransferManager(CopyMode.MODS, selectedSourceDir, selectedDstDir, copyToBox.getText(), byDefaultProp.isSelected(), lmm);
             Task<Boolean> trayThread = new FileTransferManager(CopyMode.TRAY, selectedSourceDir, selectedDstDir, copyToBox.getText(), byDefaultProp.isSelected(), lmm);
             Boolean resultMods = false, resultTray = false;
 
-            lmm.bindLog(modsThread.messageProperty());
-            modsThread.run();
-            trayThread.run();
+            //lmm.bindLog(modsThread.messageProperty());
+            CompletableFuture.supplyAsync(() -> modsThread, threadPool);
+            //modsThread.run();
+            //trayThread.run();
 
         // } catch (IOException ioe) {
         //     log.error(ioe.getMessage(), ioe);
         } catch (IllegalThreadStateException itse) {
             log.error(itse.getMessage(), itse);
-        }
-
-        finally {
+        } finally {
             downloadButton.setDisable(false);
         }
     }

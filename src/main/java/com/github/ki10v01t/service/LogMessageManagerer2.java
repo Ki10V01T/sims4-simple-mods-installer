@@ -9,12 +9,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 
-public class LogMessageManager {
+public class LogMessageManagerer2 {
     //GUI text area    
-    private ListView<String> logBox;
-    private Integer columnCount;
+    private static ListView<String> logBox;
+    private static Integer columnCount;
 
-    private ObservableList<String> messageList;
+    private static ObservableList<String> messageList;
 
     //date and time
     private static SimpleDateFormat formater = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss:S");
@@ -25,17 +25,17 @@ public class LogMessageManager {
     private final static String fileAlreadyExistsTemplate = ("File : %s \n is already exists. Skip \n");
 
 
-    public LogMessageManager(ListView<String> logBox) {
-        this.logBox = logBox;
-        this.columnCount = 10;
+    public LogMessageManagerer2(ListView<String> inputLogBox) {
+        logBox = inputLogBox;
+        columnCount = 10;
 
-        this.messageList = FXCollections.observableArrayList();
-        this.logBox.setItems(messageList);
+        messageList = FXCollections.observableArrayList();
+        logBox.setItems(messageList);
         
         messageBorderTemplate = borderCalc();
     }
 
-    private String borderCalc() {
+    private static String borderCalc() {
         if (columnCount == null) {throw new NullPointerException();}
 
         return new String(Stream.of(columnCount).map(x -> {
@@ -48,17 +48,17 @@ public class LogMessageManager {
         }).collect(Collectors.joining()));
     }
 
-    public String createAlreadyExistsMessage(String sourceFileName) {
+    public static String createAlreadyExistsMessage(String sourceFileName) {
         String date = formater.format(new Date());
         return messageBorderTemplate + date + " | " + String.format(fileAlreadyExistsTemplate, sourceFileName);
     }
 
-    public String createCopyMessage(String sourceFileName, String dstFileName) {
+    public static String createCopyMessage(String sourceFileName, String dstFileName) {
         String date = formater.format(new Date());
         return messageBorderTemplate + date + " | " + String.format(copyMessageTemplate, sourceFileName, dstFileName);        
     }
 
-    public synchronized void addMessage(String message) {
+    public static synchronized void addMessage(String message) {
         messageList.add(message);
     }
 }

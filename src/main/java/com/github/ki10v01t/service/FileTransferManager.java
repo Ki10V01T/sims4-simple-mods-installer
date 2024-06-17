@@ -183,11 +183,11 @@ public class FileTransferManager extends Task<Boolean> {
             try (OutputStream fos = Files.newOutputStream(destinationFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
                 Files.copy(file,fos);
                 Thread.sleep(1000);
-                lmm.sendMessage(lmm.createCopyMessage(file.toString(), destinationFile.toString()));
+                lmm.addMessage(lmm.createCopyMessage(file.toString(), destinationFile.toString()));
                 //updateMessage(lmm.createCopyMessage(file.toString(), destinationFile.toString()));
             } catch (FileAlreadyExistsException faee) {
                 log.info(faee.getMessage(), faee);
-                lmm.sendMessage(lmm.createAlreadyExistsMessage(file.toString()));
+                lmm.addMessage(lmm.createAlreadyExistsMessage(file.toString()));
                 //updateMessage(lmm.createAlreadyExistsMessage(file.toString()));
                 //lmm.writeMessage(new LogMessage(file.toString()));
             } catch (IOException ioe) {
@@ -197,15 +197,6 @@ public class FileTransferManager extends Task<Boolean> {
             }
         });
     }
-
-    // public ChangeListener<String> fileListener() {
-    //     return new
-    // }
-
-    // @Override
-    // public void run() {
-    //     
-    // }
 
     @Override
     public Boolean call(){
