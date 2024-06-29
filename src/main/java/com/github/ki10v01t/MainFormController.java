@@ -3,14 +3,14 @@ package com.github.ki10v01t;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.service.AlertDialogManager;
+import com.github.ki10v01t.service.CancelMode;
 import com.github.ki10v01t.service.FileTransferManager;
+import com.github.ki10v01t.service.LogMessage;
 import com.github.ki10v01t.service.LogMessageManager;
 
 import javafx.collections.FXCollections;
@@ -34,23 +34,33 @@ public class MainFormController {
     @FXML
     private ListView<String> logBox;
     @FXML
-    private Button downloadButton;  
+    private Button downloadButton;
+    @FXML
+    private Button cancelButton;
 
-    private Logger log = LogManager.getLogger("MainFormController");
+    private Logger log;
 
     private Path selectedSourceDir, selectedDstDir;
-    private DirectoryChooser dc =  new DirectoryChooser();
+    private DirectoryChooser dc;
     private FileTransferManager ftm;
     private LogMessageManager lmm;
 
-    private ObservableList<String> messageList = FXCollections.observableArrayList();;
-    final ExecutorService threadPool = Executors.newFixedThreadPool(1);
+    Thread fileThread;
+    private ObservableList<String> messageList;
     
     // @FXML
     // private void switchToSecondary() throws IOException {
         
     //     App.setRoot("secondary");
     // }
+
+    @FXML
+    public void initialize() {
+        log = LogManager.getLogger("MainFormController");
+        dc = new DirectoryChooser();
+        messageList = FXCollections.observableArrayList();
+    }
+        
 
     @FXML
     private void openSourceFolder() throws IOException {
@@ -76,10 +86,62 @@ public class MainFormController {
         }
     }
 
+    private void switchBtwDownloadAndCancelButtons() {
+        Boolean resultDownloadButtonVisibility = downloadButton.isVisible() == true ? false : true;
+        Boolean resultCancelButtonVisibility = cancelButton.isVisible() == true ? false : true;
+
+        downloadButton.setVisible(resultDownloadButtonVisibility);
+        cancelButton.setVisible(resultCancelButtonVisibility);
+    }
+
+    @FXML
+    private void cancelDownoad() {
+        try {
+            fileThread.interrupt();
+        } catch (SecurityException se) {
+            log.error(se.getMessage(), se);
+        }
+    }
+
+    private void finishingOfCopyProcess(CancelMode cm) {
+        fileThread.interrupt();
+
+        Boolean copyResult;
+        LogMessage msg;
+        
+        switch (cm) {
+            case CANCELLED -> {
+                copyResult = true;
+                msg = LogMessage.createInfoMessage("File operations has been interrupted");
+            }
+            case FAILED -> {
+                copyResult = false;
+                msg = LogMessage.createErrorMessage("Error, when interrupting file operations attempt. Try again.");
+            }
+            case SUCCEEDED -> {
+                copyResult = true;
+                msg = LogMessage.createInfoMessage("Copy has been succeeded");
+            }
+            default -> {
+                copyResult = false;
+                msg = LogMessage.createInfoMessage("FATAL ERROR when finishing process. Try again.");
+            }
+        }
+
+        if(copyResult) {
+            switchBtwDownloadAndCancelButtons();
+        }
+
+        lmm.sendMessage(msg);    
+    }
+
+    // @FXML
+    // private void downloadAll() {
+    //     logBox.fireEvent(new CopyCompleteEvent(MainFormController.COPY_COMPLETE));
+    // }
+
     @FXML
     private void downloadAll() {
-        
-
         if(lmm == null) {
             lmm = new LogMessageManager(logBox, messageList);
         }
@@ -96,36 +158,20 @@ public class MainFormController {
         }
 
         try {
-            downloadButton.setDisable(true);
+            switchBtwDownloadAndCancelButtons();
             
             ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, byDefaultProp.isSelected(), lmm);
-            //Task<Boolean> ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, byDefaultProp.isSelected(), lmm);
 
-            //CompletableFuture<Void> fileThread = CompletableFuture.runAsync(() -> ftm.call(), Main.threadPool);
-            //threadPool.submit(ftm, resultMods);
+            ftm.setOnSucceeded(e -> finishingOfCopyProcess(CancelMode.SUCCEEDED));
+            ftm.setOnCancelled(e -> finishingOfCopyProcess(CancelMode.CANCELLED));
+            ftm.setOnFailed(e -> finishingOfCopyProcess(CancelMode.FAILED));
 
-
-            //ftm.call();
-            Thread fileThread = new Thread(ftm, "File copy thread");
+            fileThread = new Thread(ftm, "File copy thread");
             fileThread.setDaemon(true);
-            fileThread.start();
-            fileThread.start();
-            // while(fileThread.isAlive()) {
-            //     continue;
-            // }
-        // }
+            fileThread.start();        
+
         } catch (IllegalThreadStateException itse) {
             log.error(itse.getMessage(), itse);
-        } 
-        
-        // catch (InterruptedException ie) {
-        //     log.error(ie.getMessage(), ie);
-        // } catch (ExecutionException ee) {
-        //     log.error(ee.getMessage(), ee);
-        // }
-        
-        finally {
-            downloadButton.setDisable(false);
         }
     }
 }

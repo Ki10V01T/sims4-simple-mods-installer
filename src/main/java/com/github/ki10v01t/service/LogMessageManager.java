@@ -1,8 +1,6 @@
 package com.github.ki10v01t.service;
 
 import javafx.application.Platform;
-import javafx.beans.value.ObservableStringValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 
@@ -21,9 +19,12 @@ public class LogMessageManager {
     }
 
     
-
-    public synchronized void sendMessage(LogMessage message) {
-        messageList.add(message.getMessage());
+    public synchronized void sendMessage(LogMessage message) throws IllegalStateException {
+        if(Thread.currentThread().getId() == 1) {
+            messageList.add(message.getMessage());
+        } else {
+            Platform.runLater(() -> messageList.add(message.getMessage()));
+        }
         //logBox.refresh();
     }
 }

@@ -18,10 +18,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.Main;
-
 import javafx.concurrent.Task;
 
 public class FileTransferManager extends Task<Void> {
+
     private Logger log = LogManager.getLogger("FileTransferManager");
     private Path selectedSourceDir, selectedDstDir;
 
@@ -161,7 +161,7 @@ public class FileTransferManager extends Task<Void> {
             Files.createDirectories(selectedDstDir);
             
             copyFileToDestination(pathList, selectedDstDir);
-    }
+        }
     }
 
     private void copyFileToDestination(ArrayList<Path> inputFilesList, Path destinationFolder) {        
@@ -170,18 +170,12 @@ public class FileTransferManager extends Task<Void> {
             try (OutputStream fos = Files.newOutputStream(destinationFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
                 Files.copy(file,fos);
                 lmm.sendMessage(LogMessage.createCopyMessage(file.toString(), destinationFile.toString()));
-                Thread.sleep(1000);
-                //updateMessage(lmm.createCopyMessage(file.toString(), destinationFile.toString()));
             } catch (FileAlreadyExistsException faee) {
                 log.info(faee.getMessage(), faee);
                 lmm.sendMessage(LogMessage.createAlreadyExistsMessage(file.toString()));
-                //updateMessage(lmm.createAlreadyExistsMessage(file.toString()));
-                //lmm.writeMessage(new LogMessage(file.toString()));
             } catch (SecurityException se) {
                 log.error(se.getMessage(), se);
-            } catch (InterruptedException ie) {
-                log.error(ie.getMessage(), ie);
-            } 
+            }
             catch (IOException ioe) {
                 log.error(ioe.getMessage(), ioe);
             }
@@ -192,6 +186,7 @@ public class FileTransferManager extends Task<Void> {
     public Void call(){
         try {
             copyModsAndTray();
+            
         } catch (IOException ioe) {
             log.error(ioe.getMessage(), ioe);
         } catch (InterruptedException ie) {

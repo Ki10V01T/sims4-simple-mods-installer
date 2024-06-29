@@ -14,13 +14,16 @@ public class LogMessage {
     private static final String messageBorderTemplate = borderCalc();;
     private static final String copyMessageTemplate = ("Copy file from: %s \n To: %s \n");
     private static final String fileAlreadyExistsTemplate = ("File : %s \n is already exists. Skip \n");
-    private static final String infoTemplate = ("Info message: %s");
+    private static final String infoTemplate = ("Info: %s");
+    private static final String errorTemplate = ("Error: %s");
 
     private String message;
 
+    private LogMessage() {
 
+    }
 
-    public LogMessage(String message) {
+    private LogMessage(String message) {
         this.message = message;
     }
 
@@ -39,6 +42,11 @@ public class LogMessage {
             result += "\n";
             return result;
         }).collect(Collectors.joining()));
+    }
+
+    public static synchronized LogMessage createErrorMessage(String message) {
+        String date = formater.format(new Date());
+        return new LogMessage(messageBorderTemplate + date + " | " + String.format(errorTemplate, message));
     }
 
     public static synchronized LogMessage createInfoMessage(String message) {
