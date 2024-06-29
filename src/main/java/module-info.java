@@ -3,6 +3,7 @@ module com.github.ki10v01t {
     requires javafx.fxml;
     requires org.apache.logging.log4j.core;
     requires javafx.graphics;
+    requires javafx.base;
 
     opens com.github.ki10v01t to javafx.fxml;
     exports com.github.ki10v01t;
