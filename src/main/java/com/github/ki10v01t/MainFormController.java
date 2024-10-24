@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.service.AlertDialogManager;
-import com.github.ki10v01t.service.CancelMode;
+import com.github.ki10v01t.service.ExitMode;
 import com.github.ki10v01t.service.FileTransferManager;
 import com.github.ki10v01t.service.LogMessage;
 import com.github.ki10v01t.service.LogMessageManager;
@@ -25,8 +25,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class MainFormController {
+
     @FXML
-    private CheckBox byDefaultProp; 
+    private CheckBox byDefaultProp;
+    @FXML
+    private CheckBox toSameFolderProp; 
     @FXML
     private TextField copyFromBox;
     @FXML
@@ -37,6 +40,8 @@ public class MainFormController {
     private Button downloadButton;
     @FXML
     private Button cancelButton;
+    @FXML
+    private Button destButton;
 
     private Logger log;
 
@@ -45,7 +50,7 @@ public class MainFormController {
     private FileTransferManager ftm;
     private LogMessageManager lmm;
 
-    Thread fileThread;
+    private Thread fileThread;
     private ObservableList<String> messageList;
     
     // @FXML
@@ -97,13 +102,35 @@ public class MainFormController {
     @FXML
     private void cancelDownoad() {
         try {
-            fileThread.interrupt();
+            finishingOfCopyProcess(ExitMode.CANCELLED);
         } catch (SecurityException se) {
             log.error(se.getMessage(), se);
         }
     }
 
-    private void finishingOfCopyProcess(CancelMode cm) {
+    @FXML
+    private void byDefaultPropCheck() {
+        if(byDefaultProp.isSelected() == true) {
+            copyToBox.setDisable(true);
+            toSameFolderProp.setDisable(true);
+            destButton.setDisable(true);
+        } else {
+            copyToBox.setDisable(false);
+            toSameFolderProp.setDisable(false);
+            destButton.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void toSameFolderPropCheck() {
+        if(toSameFolderProp.isSelected() == true) {
+            byDefaultProp.setDisable(true);
+        } else {
+            byDefaultProp.setDisable(false);
+        }
+    }
+
+    private void finishingOfCopyProcess(ExitMode cm) {
         fileThread.interrupt();
 
         Boolean copyResult;
@@ -130,6 +157,8 @@ public class MainFormController {
 
         if(copyResult) {
             switchBtwDownloadAndCancelButtons();
+        } else {
+            AlertDialogManager.throwAlertDialog("Error", msg.getMessage(), AlertType.ERROR);
         }
 
         lmm.sendMessage(msg);    
@@ -159,16 +188,19 @@ public class MainFormController {
 
         try {
             switchBtwDownloadAndCancelButtons();
-            
-            ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, byDefaultProp.isSelected(), lmm);
 
-            ftm.setOnSucceeded(e -> finishingOfCopyProcess(CancelMode.SUCCEEDED));
-            ftm.setOnCancelled(e -> finishingOfCopyProcess(CancelMode.CANCELLED));
-            ftm.setOnFailed(e -> finishingOfCopyProcess(CancelMode.FAILED));
+            Boolean byDefaultStatus = toSameFolderProp.isSelected() ? false : byDefaultProp.isSelected();
+            Boolean samePathStatus = byDefaultProp.isSelected() ? false : toSameFolderProp.isSelected();
+            
+            ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, byDefaultStatus, samePathStatus, lmm);
+
+            ftm.setOnSucceeded(e -> finishingOfCopyProcess(ExitMode.SUCCEEDED));
+            ftm.setOnCancelled(e -> finishingOfCopyProcess(ExitMode.CANCELLED));
+            ftm.setOnFailed(e -> finishingOfCopyProcess(ExitMode.FAILED));
 
             fileThread = new Thread(ftm, "File copy thread");
             fileThread.setDaemon(true);
-            fileThread.start();        
+            fileThread.start();
 
         } catch (IllegalThreadStateException itse) {
             log.error(itse.getMessage(), itse);
