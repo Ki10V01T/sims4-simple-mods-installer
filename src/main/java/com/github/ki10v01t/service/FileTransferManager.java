@@ -121,6 +121,7 @@ public class FileTransferManager extends Task<Void> {
 
                     calculatedDir = Paths.get(osHome + "\\Electronic Arts\\The Sims 4\\" + targetFolderName + "\\" + date);
 
+                    //lmm.sendMessage(LogMessage.createInfoMessage(Main.res.getBundle("message.log.iswindows") + calculatedDir.toString()));
                     lmm.sendMessage(LogMessage.createInfoMessage("Your system type is Windows. Default copy path sets to " + calculatedDir.toString()));
                 } else {
                     String wineprefix = System.getenv("WINEPREFIX");

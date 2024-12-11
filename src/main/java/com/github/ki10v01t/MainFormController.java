@@ -20,6 +20,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -42,6 +43,12 @@ public class MainFormController {
     private Button cancelButton;
     @FXML
     private Button destButton;
+    @FXML
+    private MenuItem instructionsMenuItem;
+    @FXML
+    private MenuItem aboutMenuItem;
+    @FXML
+    private MenuItem supportMenuItem;
 
     private Logger log;
 
@@ -77,6 +84,21 @@ public class MainFormController {
         if (selectedSourceDir != null) {
             copyFromBox.setText(selectedSourceDir.toString());
         }
+    }
+
+    @FXML
+    private void openInstructionsWindow() {
+        AlertDialogManager.throwAlertDialog(700.0, Main.res.getString("menubar.instructions"), Main.res.getString("message.menubar.instructions"), AlertType.INFORMATION);
+    }
+
+    @FXML
+    private void openAboutWindow() {
+
+    }
+
+    @FXML
+    private void openSupportWindow() {
+
     }
 
     @FXML
