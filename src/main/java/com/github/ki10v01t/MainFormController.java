@@ -90,7 +90,9 @@ public class MainFormController {
     @FXML
     private void openInstructionsWindow() {
         AlertDialogManager adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.INFORMATION)
-                                                        .setWidth(700.0)
+                                                        .setWidth(800.0)
+                                                        .setHeight(700.0)
+                                                        .setResizable(true)
                                                         .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("menubar.instructions"))
                                                         .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("message.menubar.instructions"))
                                                         .build();
