@@ -4,25 +4,40 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="540.0" prefWidth="532.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ki10v01t.MainFormController">
+<VBox prefHeight="600.0" prefWidth="532.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ki10v01t.MainFormController">
   <children>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="413.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefWidth="532.0" VBox.vgrow="ALWAYS">
       <children>
-            <Button id="sourceButton" fx:id="sourceButton" layoutX="184.0" layoutY="40.0" mnemonicParsing="false" onAction="#openSourceFolder" prefHeight="26.0" prefWidth="170.0" text="Select Source Folder" />
-            <Button id="destButton" fx:id="destButton" layoutX="184.0" layoutY="90.0" mnemonicParsing="false" onAction="#openDestinationFolder" prefHeight="26.0" prefWidth="170.0" text="Select Destination Folder" />
-            <TextField id="copyFromBox" fx:id="copyFromBox" editable="false" layoutX="15.0" layoutY="40.0" prefHeight="26.0" prefWidth="160.0" />
-            <Label layoutX="15.0" layoutY="20.0" text="Copy mods and tray from:" />
-            <Label layoutX="15.0" layoutY="70.0" text="Copy mods to:" />
-            <TextField id="copyToBox" fx:id="copyToBox" editable="false" layoutX="15.0" layoutY="90.0" prefHeight="26.0" prefWidth="160.0" />
-            <Button id="downloadButton" fx:id="downloadButton" layoutX="365.0" layoutY="40.0" mnemonicParsing="false" onAction="#downloadAll" prefHeight="80.0" prefWidth="150.0" text="Download" visible="true" />
-            <Label layoutX="15.0" layoutY="170.0" text="Progress Log:" />
-            <CheckBox id="byDefaultProp" fx:id="byDefaultProp" layoutX="15.0" layoutY="130.0" mnemonicParsing="false" text="Copy by default" />
-            <ListView fx:id="logBox" layoutX="15.0" layoutY="194.0" prefHeight="332.0" prefWidth="503.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="193.0" />
-            <Button id="cancelButton" fx:id="cancelButton" layoutX="365.0" layoutY="40.0" mnemonicParsing="false" onAction="#cancelDownoad" prefHeight="80.0" prefWidth="150.0" text="Cancel" visible="false" />
+            <MenuBar layoutY="1.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="%menubar.help">
+                  <items>
+                        <MenuItem fx:id="instructionsMenuItem" mnemonicParsing="false" onAction="#openInstructionsWindow" text="%menubar.instructions" />
+                        <MenuItem fx:id="supportMenuItem" mnemonicParsing="false" onAction="#openSupportWindow" text="%menubar.support" />
+                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#openAboutWindow" text="%menubar.about" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <Button id="sourceButton" fx:id="sourceButton" layoutX="348.0" layoutY="64.0" mnemonicParsing="false" onAction="#openSourceFolder" prefHeight="26.0" prefWidth="170.0" text="%button.sourcefolder" />
+            <Button id="destButton" fx:id="destButton" layoutX="348.0" layoutY="110.0" mnemonicParsing="false" onAction="#openDestinationFolder" prefHeight="26.0" prefWidth="170.0" text="%button.destinationfolder" />
+            <TextField id="copyFromBox" fx:id="copyFromBox" editable="false" layoutX="15.0" layoutY="64.0" prefHeight="26.0" prefWidth="318.0" />
+            <Label layoutX="15.0" layoutY="44.0" text="%labels.copyfrom" />
+            <Label layoutX="15.0" layoutY="90.0" text="%labels.copyto" />
+            <TextField id="copyToBox" fx:id="copyToBox" editable="false" layoutX="15.0" layoutY="110.0" prefHeight="26.0" prefWidth="318.0" />
+            <Button id="downloadButton" fx:id="downloadButton" layoutX="348.0" layoutY="155.0" mnemonicParsing="false" onAction="#downloadAll" prefHeight="41.0" prefWidth="170.0" text="%button.download" visible="true" />
+            <Label layoutX="15.0" layoutY="182.0" text="%labels.progresslog" />
+            <CheckBox id="byDefaultProp" fx:id="byDefaultProp" layoutX="15.0" layoutY="146.0" mnemonicParsing="false" onAction="#byDefaultPropCheck" text="%checkboxes.bydefault" />
+            <ListView fx:id="logBox" layoutX="15.0" layoutY="214.0" prefHeight="376.0" prefWidth="503.0" AnchorPane.bottomAnchor="16.0" AnchorPane.topAnchor="208.0" />
+            <Button id="cancelButton" fx:id="cancelButton" layoutX="348.0" layoutY="155.0" mnemonicParsing="false" onAction="#cancelDownoad" prefHeight="41.0" prefWidth="170.0" text="%button.cancel" visible="false" />
+            <CheckBox id="toSameFolderProp" fx:id="toSameFolderProp" layoutX="144.0" layoutY="146.0" mnemonicParsing="false" onAction="#toSameFolderPropCheck" prefHeight="0.0" prefWidth="141.0" text="%checkboxes.samefolder" />
       </children>
     </AnchorPane>
   </children>

@@ -8,10 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.service.AlertDialogManager;
-import com.github.ki10v01t.service.CancelMode;
+import com.github.ki10v01t.service.ExitMode;
 import com.github.ki10v01t.service.FileTransferManager;
 import com.github.ki10v01t.service.LogMessage;
 import com.github.ki10v01t.service.LogMessageManager;
+import com.github.ki10v01t.service.LocaleManager;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,13 +21,17 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class MainFormController {
+
     @FXML
-    private CheckBox byDefaultProp; 
+    private CheckBox byDefaultProp;
+    @FXML
+    private CheckBox toSameFolderProp; 
     @FXML
     private TextField copyFromBox;
     @FXML
@@ -37,6 +42,14 @@ public class MainFormController {
     private Button downloadButton;
     @FXML
     private Button cancelButton;
+    @FXML
+    private Button destButton;
+    @FXML
+    private MenuItem instructionsMenuItem;
+    @FXML
+    private MenuItem aboutMenuItem;
+    @FXML
+    private MenuItem supportMenuItem;
 
     private Logger log;
 
@@ -45,7 +58,7 @@ public class MainFormController {
     private FileTransferManager ftm;
     private LogMessageManager lmm;
 
-    Thread fileThread;
+    private Thread fileThread;
     private ObservableList<String> messageList;
     
     // @FXML
@@ -75,6 +88,28 @@ public class MainFormController {
     }
 
     @FXML
+    private void openInstructionsWindow() {
+        AlertDialogManager adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.INFORMATION)
+                                                        .setWidth(800.0)
+                                                        .setHeight(700.0)
+                                                        .setResizable(true)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("menubar.instructions"))
+                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("message.menubar.instructions"))
+                                                        .build();
+        adm.throwAlertDialog();
+    }
+
+    @FXML
+    private void openAboutWindow() {
+
+    }
+
+    @FXML
+    private void openSupportWindow() {
+
+    }
+
+    @FXML
     private void openDestinationFolder() throws IOException {
         File file = dc.showDialog(Stage.getWindows().get(0));
         if (file != null) {
@@ -97,13 +132,35 @@ public class MainFormController {
     @FXML
     private void cancelDownoad() {
         try {
-            fileThread.interrupt();
+            finishingOfCopyProcess(ExitMode.CANCELLED);
         } catch (SecurityException se) {
             log.error(se.getMessage(), se);
         }
     }
 
-    private void finishingOfCopyProcess(CancelMode cm) {
+    @FXML
+    private void byDefaultPropCheck() {
+        if(byDefaultProp.isSelected() == true) {
+            copyToBox.setDisable(true);
+            toSameFolderProp.setDisable(true);
+            destButton.setDisable(true);
+        } else {
+            copyToBox.setDisable(false);
+            toSameFolderProp.setDisable(false);
+            destButton.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void toSameFolderPropCheck() {
+        if(toSameFolderProp.isSelected() == true) {
+            byDefaultProp.setDisable(true);
+        } else {
+            byDefaultProp.setDisable(false);
+        }
+    }
+
+    private void finishingOfCopyProcess(ExitMode cm) {
         fileThread.interrupt();
 
         Boolean copyResult;
@@ -112,24 +169,30 @@ public class MainFormController {
         switch (cm) {
             case CANCELLED -> {
                 copyResult = true;
-                msg = LogMessage.createInfoMessage("File operations has been interrupted");
+                msg = LogMessage.createInfoMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.cancelled"));
             }
             case FAILED -> {
                 copyResult = false;
-                msg = LogMessage.createErrorMessage("Error, when interrupting file operations attempt. Try again.");
+                msg = LogMessage.createErrorMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.failed"));
             }
             case SUCCEEDED -> {
                 copyResult = true;
-                msg = LogMessage.createInfoMessage("Copy has been succeeded");
+                msg = LogMessage.createInfoMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.succeeded"));
             }
             default -> {
                 copyResult = false;
-                msg = LogMessage.createInfoMessage("FATAL ERROR when finishing process. Try again.");
+                msg = LogMessage.createInfoMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.default"));
             }
         }
 
         if(copyResult) {
             switchBtwDownloadAndCancelButtons();
+        } else {
+            AlertDialogManager adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.ERROR)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("alert.title.error"))
+                                                        .setBodyText(msg.getMessage())
+                                                        .build();
+            adm.throwAlertDialog();
         }
 
         lmm.sendMessage(msg);    
@@ -142,33 +205,46 @@ public class MainFormController {
 
     @FXML
     private void downloadAll() {
+        AlertDialogManager adm;
+
         if(lmm == null) {
             lmm = new LogMessageManager(logBox, messageList);
         }
 
         if (selectedSourceDir == null) {
-            AlertDialogManager.throwAlertDialog("Source folder han not been selected", "Please, select a source folder", AlertType.WARNING);
+            adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.WARNING)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("alert.title.sourcedir"))
+                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("alert.body.sourcedir"))
+                                                        .build();
+            adm.throwAlertDialog();
             return;
         }
         
         //System.out.println(Main.osType);
         if ((byDefaultProp.isSelected() == false) && (copyToBox.getText() == "")) {
-            AlertDialogManager.throwAlertDialog("Destination forlder has not been selected", "Please, select a destination folder or choose a 'Copy by default' property", AlertType.WARNING);
+            adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.WARNING)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("alert.title.bydefault-notselected"))
+                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("alert.body.bydefault-notselected"))
+                                                        .build();
+            adm.throwAlertDialog();
             return;
         }
 
         try {
             switchBtwDownloadAndCancelButtons();
-            
-            ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, byDefaultProp.isSelected(), lmm);
 
-            ftm.setOnSucceeded(e -> finishingOfCopyProcess(CancelMode.SUCCEEDED));
-            ftm.setOnCancelled(e -> finishingOfCopyProcess(CancelMode.CANCELLED));
-            ftm.setOnFailed(e -> finishingOfCopyProcess(CancelMode.FAILED));
+            Boolean byDefaultStatus = toSameFolderProp.isSelected() ? false : byDefaultProp.isSelected();
+            Boolean samePathStatus = byDefaultProp.isSelected() ? false : toSameFolderProp.isSelected();
+            
+            ftm = new FileTransferManager(selectedSourceDir, selectedDstDir, byDefaultStatus, samePathStatus, lmm);
+
+            ftm.setOnSucceeded(e -> finishingOfCopyProcess(ExitMode.SUCCEEDED));
+            ftm.setOnCancelled(e -> finishingOfCopyProcess(ExitMode.CANCELLED));
+            ftm.setOnFailed(e -> finishingOfCopyProcess(ExitMode.FAILED));
 
             fileThread = new Thread(ftm, "File copy thread");
             fileThread.setDaemon(true);
-            fileThread.start();        
+            fileThread.start();
 
         } catch (IllegalThreadStateException itse) {
             log.error(itse.getMessage(), itse);

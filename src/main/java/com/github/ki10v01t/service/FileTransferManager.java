@@ -28,17 +28,19 @@ public class FileTransferManager extends Task<Void> {
     private LogMessageManager lmm;
 
     private Boolean isDefaultPath;
+    private Boolean autoCreateFlag;
 
     private String slashStyle = "";
 
     private ArrayList<String> modsFileExtentions = new ArrayList<>(Arrays.asList(".package", ".ts4script"));
     private ArrayList<String> trayFileExtentions = new ArrayList<>(Arrays.asList(".rmi", ".sgi", ".blueprint", ".bpi", ".hhi", ".householdbinary", ".room", ".trayitem"));
 
-    public FileTransferManager(Path selectedSourceDir, Path selectedDstDir, Boolean defaultPathFlag, LogMessageManager lmm) {
+    public FileTransferManager(Path selectedSourceDir, Path selectedDstDir, Boolean defaultPathFlag, Boolean autoCreateFlag, LogMessageManager lmm) {
         this.lmm = lmm;
         this.isDefaultPath = defaultPathFlag;
         this.selectedSourceDir = selectedSourceDir;
         this.selectedDstDir = selectedDstDir;
+        this.autoCreateFlag = autoCreateFlag;
 
 
 
@@ -52,7 +54,8 @@ public class FileTransferManager extends Task<Void> {
     public void copyModsAndTray() throws IllegalStateException, InterruptedException, IOException {
         String osHome;
         String targetFolderName;
-
+        
+        Path calculatedDir = null;
         final ArrayList<Path> pathList =  new ArrayList<>();
         ArrayList<String> extentionsList;
         
@@ -115,52 +118,93 @@ public class FileTransferManager extends Task<Void> {
                     //osHome = System.getenv("USERPROFILE");
 
 
-                    selectedDstDir = Paths.get(osHome + "\\Electronic Arts\\The Sims 4\\" + targetFolderName + "\\" + date);
+                    calculatedDir = Paths.get(osHome + "\\Electronic Arts\\The Sims 4\\" + targetFolderName + "\\" + date);
 
-                    lmm.sendMessage(LogMessage.createInfoMessage("Your system type is Windows. Default copy path sets to " + selectedDstDir.toString()));
+                    //lmm.sendMessage(LogMessage.createInfoMessage(Main.res.getBundle("message.log.iswindows") + calculatedDir.toString()));
+                    lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.iswindows"),calculatedDir.toString())));
                 } else {
                     String wineprefix = System.getenv("WINEPREFIX");
 
                     if (wineprefix == null) {
                         osHome = System.getenv("PWD");
-                        selectedDstDir = Paths.get(osHome + "/" + targetFolderName + "/" + date);
+                        calculatedDir = Paths.get(osHome + "/" + targetFolderName + "/" + date);
 
-                        lmm.sendMessage(LogMessage.createInfoMessage("Default WINEPREFIX is not finded. In this case, all files will be saved in:  " + selectedDstDir.toString()));
+                        lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.wineprefix-isnull"), calculatedDir.toString())));
                     } else {
-                        selectedDstDir = Paths.get(wineprefix + "/users/" + System.getProperty("user.name") + "/Documents/Electronic Arts/The Sims 4/" + 
+                        calculatedDir = Paths.get(wineprefix + "/users/" + System.getProperty("user.name") + "/Documents/Electronic Arts/The Sims 4/" + 
                         targetFolderName + "/" + date);
                         
-                        lmm.sendMessage(LogMessage.createInfoMessage("Default copy path sets to founded default WINEPREFIX " + selectedDstDir.toString()));
+                        lmm.sendMessage(LogMessage.createInfoMessage("message.log.wineprefix-notnull " + calculatedDir.toString()));
                     }
                 }
-            } else if (mode == CopyMode.TRAY) {
-                Path currentDir = selectedDstDir.toAbsolutePath();
-
+            } else {
                 if (selectedDstDir == null) {
-                    throw new IllegalStateException();
+                    lmm.sendMessage(LogMessage.createErrorMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.selectedsourcedir-isnull")));
+                    return;
                 }
 
-                do {
-                    if (currentDir.endsWith("Mods")) {
-                        selectedDstDir = currentDir.getParent();
-                        break;
+                calculatedDir = null;
+
+                if ((autoCreateFlag == true)) {
+                    String pattern;
+                    if (Main.osType.equals("Windows")) {
+                        pattern = "\\\\";
+                    } else {
+                        pattern = "/";
                     }
-                    currentDir = currentDir.getParent();
-
-                    if (currentDir == null) {
-                        break;
+                    String[] tempArray = selectedSourceDir.toString().split(pattern);
+                    
+                    calculatedDir = Paths.get(selectedDstDir.toAbsolutePath().toString() + slashStyle + tempArray[tempArray.length-1]);
+    
+                } else {
+                    calculatedDir = selectedDstDir.toAbsolutePath();
+                }
+                
+                if(mode == CopyMode.MODS) {
+                    lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.copymode-mods"), calculatedDir.toString())));
+                }
+                
+                if (mode == CopyMode.TRAY) {
+                    Path savedPath = null;
+                    if(autoCreateFlag == true) {
+                        savedPath = calculatedDir;
+                    } else {
+                        calculatedDir = selectedDstDir.toAbsolutePath();
+                    }   
+                    
+                    while (calculatedDir.endsWith("Mods") == false) {  
+                        calculatedDir = calculatedDir.getParent();
+                        if(calculatedDir == null) {
+                            if(savedPath != null) {
+                                calculatedDir = savedPath;
+                                break;
+                            }
+                            calculatedDir = selectedDstDir;
+                            break;
+                        }
                     }
-                } while (currentDir.endsWith("Mods") == false);
+                    if(calculatedDir.endsWith("Mods")) {
+                        calculatedDir = calculatedDir.getParent();
+                    }
 
-
-                selectedDstDir = Paths.get(selectedDstDir.toAbsolutePath().toString() + slashStyle + "Tray");
-
-                lmm.sendMessage(LogMessage.createInfoMessage("Current path for Trayitems will be a " + selectedDstDir.toString()));
+                    calculatedDir = Paths.get(calculatedDir.toAbsolutePath().toString() + slashStyle + "Tray");
+    
+                    lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.path-to-trayitems"), calculatedDir.toString())));
+                }
             }
 
-            Files.createDirectories(selectedDstDir);
-            
-            copyFileToDestination(pathList, selectedDstDir);
+
+            if (calculatedDir == null) {
+                if(selectedDstDir == null) {
+                    lmm.sendMessage(LogMessage.createErrorMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.calculateddir-isnull")));
+                    return;
+                } else {
+                    calculatedDir = selectedDstDir.toAbsolutePath();
+                }
+            }
+
+            Files.createDirectories(calculatedDir);
+            copyFileToDestination(pathList, calculatedDir);
         }
     }
 

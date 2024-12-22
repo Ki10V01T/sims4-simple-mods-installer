@@ -1,6 +1,6 @@
 package com.github.ki10v01t.service;
 
-public enum CancelMode {
+public enum ExitMode {
     SUCCEEDED,
     CANCELLED,
     FAILED;
