@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.ki10v01t.Main;
 import javafx.concurrent.Task;
-import javafx.stage.Window;
 
 public class FileTransferManager extends Task<Void> {
 
@@ -122,7 +121,7 @@ public class FileTransferManager extends Task<Void> {
                     calculatedDir = Paths.get(osHome + "\\Electronic Arts\\The Sims 4\\" + targetFolderName + "\\" + date);
 
                     //lmm.sendMessage(LogMessage.createInfoMessage(Main.res.getBundle("message.log.iswindows") + calculatedDir.toString()));
-                    lmm.sendMessage(LogMessage.createInfoMessage("Your system type is Windows. Default copy path sets to " + calculatedDir.toString()));
+                    lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.iswindows"),calculatedDir.toString())));
                 } else {
                     String wineprefix = System.getenv("WINEPREFIX");
 
@@ -130,17 +129,17 @@ public class FileTransferManager extends Task<Void> {
                         osHome = System.getenv("PWD");
                         calculatedDir = Paths.get(osHome + "/" + targetFolderName + "/" + date);
 
-                        lmm.sendMessage(LogMessage.createInfoMessage("Default WINEPREFIX is not finded. In this case, all files will be saved in:  " + calculatedDir.toString()));
+                        lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.wineprefix-isnull"), calculatedDir.toString())));
                     } else {
                         calculatedDir = Paths.get(wineprefix + "/users/" + System.getProperty("user.name") + "/Documents/Electronic Arts/The Sims 4/" + 
                         targetFolderName + "/" + date);
                         
-                        lmm.sendMessage(LogMessage.createInfoMessage("Default copy path sets to founded default WINEPREFIX " + calculatedDir.toString()));
+                        lmm.sendMessage(LogMessage.createInfoMessage("message.log.wineprefix-notnull " + calculatedDir.toString()));
                     }
                 }
             } else {
                 if (selectedDstDir == null) {
-                    lmm.sendMessage(LogMessage.createErrorMessage("The selected directory does not have access rights or does not exist"));
+                    lmm.sendMessage(LogMessage.createErrorMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.selectedsourcedir-isnull")));
                     return;
                 }
 
@@ -162,7 +161,7 @@ public class FileTransferManager extends Task<Void> {
                 }
                 
                 if(mode == CopyMode.MODS) {
-                    lmm.sendMessage(LogMessage.createInfoMessage("Current path for copying mods will be a " + calculatedDir.toString()));
+                    lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.copymode-mods"), calculatedDir.toString())));
                 }
                 
                 if (mode == CopyMode.TRAY) {
@@ -190,14 +189,14 @@ public class FileTransferManager extends Task<Void> {
 
                     calculatedDir = Paths.get(calculatedDir.toAbsolutePath().toString() + slashStyle + "Tray");
     
-                    lmm.sendMessage(LogMessage.createInfoMessage("Current path for Trayitems will be a " + calculatedDir.toString()));
+                    lmm.sendMessage(LogMessage.createInfoMessage(String.format(LocaleManager.getInstance().getResourceBundle().getString("message.log.path-to-trayitems"), calculatedDir.toString())));
                 }
             }
 
 
             if (calculatedDir == null) {
                 if(selectedDstDir == null) {
-                    lmm.sendMessage(LogMessage.createErrorMessage("The selected directory does not have access rights or does not exist"));
+                    lmm.sendMessage(LogMessage.createErrorMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.calculateddir-isnull")));
                     return;
                 } else {
                     calculatedDir = selectedDstDir.toAbsolutePath();

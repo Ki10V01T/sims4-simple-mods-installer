@@ -12,6 +12,7 @@ import com.github.ki10v01t.service.ExitMode;
 import com.github.ki10v01t.service.FileTransferManager;
 import com.github.ki10v01t.service.LogMessage;
 import com.github.ki10v01t.service.LogMessageManager;
+import com.github.ki10v01t.service.LocaleManager;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -88,7 +89,12 @@ public class MainFormController {
 
     @FXML
     private void openInstructionsWindow() {
-        AlertDialogManager.throwAlertDialog(700.0, Main.res.getString("menubar.instructions"), Main.res.getString("message.menubar.instructions"), AlertType.INFORMATION);
+        AlertDialogManager adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.INFORMATION)
+                                                        .setWidth(700.0)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("menubar.instructions"))
+                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("message.menubar.instructions"))
+                                                        .build();
+        adm.throwAlertDialog();
     }
 
     @FXML
@@ -161,26 +167,30 @@ public class MainFormController {
         switch (cm) {
             case CANCELLED -> {
                 copyResult = true;
-                msg = LogMessage.createInfoMessage("File operations has been interrupted");
+                msg = LogMessage.createInfoMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.cancelled"));
             }
             case FAILED -> {
                 copyResult = false;
-                msg = LogMessage.createErrorMessage("Error, when interrupting file operations attempt. Try again.");
+                msg = LogMessage.createErrorMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.failed"));
             }
             case SUCCEEDED -> {
                 copyResult = true;
-                msg = LogMessage.createInfoMessage("Copy has been succeeded");
+                msg = LogMessage.createInfoMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.succeeded"));
             }
             default -> {
                 copyResult = false;
-                msg = LogMessage.createInfoMessage("FATAL ERROR when finishing process. Try again.");
+                msg = LogMessage.createInfoMessage(LocaleManager.getInstance().getResourceBundle().getString("message.log.completion.default"));
             }
         }
 
         if(copyResult) {
             switchBtwDownloadAndCancelButtons();
         } else {
-            AlertDialogManager.throwAlertDialog("Error", msg.getMessage(), AlertType.ERROR);
+            AlertDialogManager adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.ERROR)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("alert.title.error"))
+                                                        .setBodyText(msg.getMessage())
+                                                        .build();
+            adm.throwAlertDialog();
         }
 
         lmm.sendMessage(msg);    
@@ -193,18 +203,28 @@ public class MainFormController {
 
     @FXML
     private void downloadAll() {
+        AlertDialogManager adm;
+
         if(lmm == null) {
             lmm = new LogMessageManager(logBox, messageList);
         }
 
         if (selectedSourceDir == null) {
-            AlertDialogManager.throwAlertDialog("Source folder han not been selected", "Please, select a source folder", AlertType.WARNING);
+            adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.WARNING)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("alert.title.sourcedir"))
+                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("alert.body.sourcedir"))
+                                                        .build();
+            adm.throwAlertDialog();
             return;
         }
         
         //System.out.println(Main.osType);
         if ((byDefaultProp.isSelected() == false) && (copyToBox.getText() == "")) {
-            AlertDialogManager.throwAlertDialog("Destination forlder has not been selected", "Please, select a destination folder or choose a 'Copy by default' property", AlertType.WARNING);
+            adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.WARNING)
+                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("alert.title.bydefault-notselected"))
+                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("alert.body.bydefault-notselected"))
+                                                        .build();
+            adm.throwAlertDialog();
             return;
         }
 

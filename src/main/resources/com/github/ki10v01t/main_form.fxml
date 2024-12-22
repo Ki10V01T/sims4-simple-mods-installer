@@ -36,7 +36,7 @@
             <Label layoutX="15.0" layoutY="182.0" text="%labels.progresslog" />
             <CheckBox id="byDefaultProp" fx:id="byDefaultProp" layoutX="15.0" layoutY="146.0" mnemonicParsing="false" onAction="#byDefaultPropCheck" text="%checkboxes.bydefault" />
             <ListView fx:id="logBox" layoutX="15.0" layoutY="214.0" prefHeight="376.0" prefWidth="503.0" AnchorPane.bottomAnchor="16.0" AnchorPane.topAnchor="208.0" />
-            <Button id="cancelButton" fx:id="cancelButton" layoutX="348.0" layoutY="155.0" mnemonicParsing="false" onAction="#cancelDownoad" prefHeight="80.0" prefWidth="150.0" text="%button.cancel" visible="false" />
+            <Button id="cancelButton" fx:id="cancelButton" layoutX="348.0" layoutY="155.0" mnemonicParsing="false" onAction="#cancelDownoad" prefHeight="41.0" prefWidth="170.0" text="%button.cancel" visible="false" />
             <CheckBox id="toSameFolderProp" fx:id="toSameFolderProp" layoutX="144.0" layoutY="146.0" mnemonicParsing="false" onAction="#toSameFolderPropCheck" prefHeight="0.0" prefWidth="141.0" text="%checkboxes.samefolder" />
       </children>
     </AnchorPane>

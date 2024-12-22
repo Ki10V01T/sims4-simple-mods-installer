@@ -11,12 +11,13 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import com.github.ki10v01t.service.LocaleManager;
+
 /**
  * JavaFX App
  */
 public class Main extends Application {
     private static Scene scene;
-    private static ResourceBundle res; 
     public static final String osType = Stream.of(System.getProperty("os.name").split(" ")).findFirst().get();
 
     @Override
@@ -36,8 +37,8 @@ public class Main extends Application {
         Locale locale = Locale.getDefault();
         System.out.println("lang = " + lang + "\nlocale = " + locale.getLanguage());
         switch (locale.getLanguage()) {
-            case "ru" -> res = ResourceBundle.getBundle("com.github.ki10v01t.locales.locale_ru", locale);
-            default -> res = ResourceBundle.getBundle("com.github.ki10v01t.locales.locale_en", locale); 
+            case "ru" -> LocaleManager.createInstance(ResourceBundle.getBundle("com.github.ki10v01t.locales.locale_ru", locale));
+            default -> LocaleManager.createInstance(ResourceBundle.getBundle("com.github.ki10v01t.locales.locale_en", locale)); 
         }
         //res = ResourceBundle.getBundle("locale", Locale.getDefault());
     }
@@ -48,7 +49,7 @@ public class Main extends Application {
 
     private static Parent loadFXML(String fxml) throws IOException {
         setLocale();
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"), res);
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"), LocaleManager.getInstance().getResourceBundle());
         return fxmlLoader.load();
     }
 

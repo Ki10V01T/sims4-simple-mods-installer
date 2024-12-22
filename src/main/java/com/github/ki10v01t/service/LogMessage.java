@@ -12,10 +12,10 @@ public class LogMessage {
     //templates
     private static Integer columnCount = 20;
     private static final String messageBorderTemplate = borderCalc();;
-    private static final String copyMessageTemplate = ("Copy file from: %s \n To: %s \n");
-    private static final String fileAlreadyExistsTemplate = ("File : %s \n is already exists. Skip \n");
-    private static final String infoTemplate = ("Info: %s");
-    private static final String errorTemplate = ("Error: %s");
+    private static final String copyMessageTemplate = LocaleManager.getInstance().getResourceBundle().getString("message.log.template.copymessage");
+    private static final String fileAlreadyExistsTemplate = LocaleManager.getInstance().getResourceBundle().getString("message.log.template.filealreadyexists");
+    private static final String infoTemplate = LocaleManager.getInstance().getResourceBundle().getString("message.log.template.info");
+    private static final String errorTemplate = LocaleManager.getInstance().getResourceBundle().getString("message.log.template.error");
 
     private String message;
 
