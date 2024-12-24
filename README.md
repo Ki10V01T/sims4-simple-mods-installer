@@ -13,7 +13,7 @@ We all enjoy downloading a lot of mods for our favorite games. If you get carrie
 This mini-application is designed to simplify the installation of mods in the game. All you need is to unzip all the mods. Next, The Sims 4 Simple Mods Manager comes into play!
 
 ### **2. How do I launch it?**
-1. Download the latest [release](https://)
+1. Download the latest [release](https://github.com/Ki10V01T/sims4_mods_downloader/releases)
 2. Unpacking the archive
 3. Launch
     - If you have Windows, launch sims4_mods_downloader.exe,
@@ -38,7 +38,7 @@ All step-by-step instructions are located inside the program: Help > Instruction
 Данное мини-приложение, призвано упростить процесс установки модов в игру. Всё, что вам нужно, это только разархивировать все моды. Дальше в дело вступает The Sims 4 Simple Mods Manager!
 
 ### **2. Как запустить?**
-1. Скачиваем последний [релиз](https://)
+1. Скачиваем последний [релиз](https://github.com/Ki10V01T/sims4_mods_downloader/releases)
 2. Распаковываем архив
 3. Запускаем
     - Если у вас Windows - запускаем sims4_mods_downloader.exe,
