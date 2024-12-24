@@ -24,7 +24,7 @@ public class Main extends Application {
     public void start(@SuppressWarnings("exports") Stage stage) throws IOException {
 
         scene = new Scene(loadFXML("main_form"), 532, 540);
-        stage.setTitle("Sims 4 Simple mods dowloader");
+        stage.setTitle("The Sims 4 Simple Mods Manager");
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();

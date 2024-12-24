@@ -83,7 +83,7 @@ public class AlertDialogManager {
         if(height != null) {
             alertDialog.setHeight(height);
         }
-        if(resizable) {
+        if(resizable != null && resizable) {
             alertDialog.setResizable(resizable);
         }
 

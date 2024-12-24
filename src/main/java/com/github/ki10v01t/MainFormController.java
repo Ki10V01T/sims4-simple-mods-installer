@@ -17,13 +17,20 @@ import com.github.ki10v01t.service.LocaleManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class MainFormController {
@@ -89,24 +96,80 @@ public class MainFormController {
 
     @FXML
     private void openInstructionsWindow() {
-        AlertDialogManager adm = new AlertDialogManager.AlertDialogManagerBuilder(AlertType.INFORMATION)
-                                                        .setWidth(800.0)
-                                                        .setHeight(700.0)
-                                                        .setResizable(true)
-                                                        .setHeaderText(LocaleManager.getInstance().getResourceBundle().getString("menubar.instructions"))
-                                                        .setBodyText(LocaleManager.getInstance().getResourceBundle().getString("message.menubar.instructions"))
-                                                        .build();
-        adm.throwAlertDialog();
+        Stage primaryStage = (Stage) cancelButton.getScene().getWindow();
+        Stage instructionsStage = new Stage();
+        
+        TextArea textArea = new TextArea();
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setPrefSize(595, 395);
+        String longText = LocaleManager.getInstance().getResourceBundle().getString("message.menubar.instructions");
+        textArea.setText(longText);
+        
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        
+        Scene scene = new Scene(scrollPane, 600, 400);
+        
+        instructionsStage.setResizable(false);
+        instructionsStage.setScene(scene);
+        instructionsStage.setTitle(LocaleManager.getInstance().getResourceBundle().getString("menubar.instructions"));
+        instructionsStage.initOwner(primaryStage);
+        instructionsStage.initModality(Modality.WINDOW_MODAL);
+        instructionsStage.showAndWait();
     }
 
     @FXML
     private void openAboutWindow() {
-
+        Stage primaryStage = (Stage) cancelButton.getScene().getWindow();
+        Stage instructionsStage = new Stage();
+        
+        TextArea textArea = new TextArea();
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setPrefSize(595, 395);
+        String longText = LocaleManager.getInstance().getResourceBundle().getString("message.menubar.about");
+        textArea.setText(longText);
+        
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        
+        Scene scene = new Scene(scrollPane, 600, 400);
+        
+        instructionsStage.setResizable(false);
+        instructionsStage.setScene(scene);
+        instructionsStage.setTitle(LocaleManager.getInstance().getResourceBundle().getString("menubar.about"));
+        instructionsStage.initOwner(primaryStage);
+        instructionsStage.initModality(Modality.WINDOW_MODAL);
+        instructionsStage.showAndWait();
     }
 
     @FXML
     private void openSupportWindow() {
-
+        Stage primaryStage = (Stage) cancelButton.getScene().getWindow();
+        Stage instructionsStage = new Stage();
+        
+        TextArea textArea = new TextArea();
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setPrefSize(495, 195);
+        String longText = LocaleManager.getInstance().getResourceBundle().getString("message.menubar.support");
+        textArea.setText(longText);
+        
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        
+        Scene scene = new Scene(scrollPane, 500, 200);
+        
+        instructionsStage.setResizable(false);
+        instructionsStage.setScene(scene);
+        instructionsStage.setTitle(LocaleManager.getInstance().getResourceBundle().getString("menubar.support"));
+        instructionsStage.initOwner(primaryStage);
+        instructionsStage.initModality(Modality.WINDOW_MODAL);
+        instructionsStage.showAndWait();
     }
 
     @FXML
